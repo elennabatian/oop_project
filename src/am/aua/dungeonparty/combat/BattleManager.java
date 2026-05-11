@@ -1,12 +1,10 @@
 package am.aua.dungeonparty.combat;
 
-import am.aua.dungeonparty.exceptions.AbsenceOfItemException;
+import am.aua.dungeonparty.exceptions.AbsenceOfSpellException;   // was AbsenceOfItemException
 import am.aua.dungeonparty.inventory.Potion;
 import am.aua.dungeonparty.inventory.Spell;
 import am.aua.dungeonparty.inventory.Item;
-
-// Handles all combat actions: attacks, skills, item usage, combo moves,
-// and the special Healer revive mechanic.
+import am.aua.dungeonparty.core.*;
 
 public class BattleManager {
 
@@ -27,12 +25,10 @@ public class BattleManager {
             }
         }
 
-        // Check mana
         if (attacker.getMana() < skill.getManaCost()) {
             return new TurnResult(false, "Not enough mana to use " + skill.getName() + ".", 0, 0);
         }
 
-        // Deduct mana and apply damage
         attacker.setMana(attacker.getMana() - skill.getManaCost());
         defender.takeDamage(skill.getDamage());
 
@@ -41,9 +37,9 @@ public class BattleManager {
 
         if (skill.getEffectType() == Skill.EffectType.STUN) {
             opponentStunned = true;
-            extraTurn = true;   // Ranger attacks again immediately after the stun
+            extraTurn = true;
             if (attacker instanceof Ranger) {
-                ((Ranger) attacker).setStunAvailable(false);  // mark as used
+                ((Ranger) attacker).setStunAvailable(false);
             }
         }
 
@@ -52,26 +48,17 @@ public class BattleManager {
         return new TurnResult(true, msg, skill.getDamage(), 0, extraTurn, opponentStunned);
     }
 
-    /**
-     * Use an item from the attacker's inventory.
-     */
     public TurnResult performUseItem(Player user, Player target, int itemIndex) {
         return user.getInventory().useItem(itemIndex, user, target);
     }
 
-    /**
-     * Perform the double‑effect combo: consumes two matching potions and one spell
-     * to deal double the spell's damage.
-     */
     public TurnResult performCombo(Player attacker, Player defender) {
         try {
-            // Must have at least two potions of the same type and one spell
             if (!attacker.getInventory().hasMatchingPotions(2)) {
                 return new TurnResult(false, "You need two potions of the same type for a combo.", 0, 0);
             }
-            Spell spell = attacker.getInventory().getFirstSpell(); // throws if absent
+            Spell spell = attacker.getInventory().getFirstSpell();
 
-            // Find and remove two matching potions
             String potionType = null;
             Potion first = null, second = null;
             for (Item item : attacker.getInventory().getItems()) {
@@ -88,7 +75,6 @@ public class BattleManager {
                 }
             }
 
-            // Remove the first and find/remove the second
             attacker.getInventory().removeItem(first);
             for (Item item : attacker.getInventory().getItems()) {
                 if (item instanceof Potion && ((Potion)item).getType().equals(potionType)) {
@@ -97,7 +83,7 @@ public class BattleManager {
                 }
             }
             if (second != null) attacker.getInventory().removeItem(second);
-            attacker.getInventory().removeItem(spell);   // consume the spel
+            attacker.getInventory().removeItem(spell);
 
             int damage = spell.getDamage() * 2;
             defender.takeDamage(damage);
@@ -109,15 +95,11 @@ public class BattleManager {
         }
     }
 
-    // Check if a character has died. If the character is a Healer and has not yet
-    // revived, resurrect them to 50 HP and return false (still alive).
-    // Returns true if the character is truly dead, false otherwise.
-
     public boolean checkDeathAndRevive(Player character) {
         if (!character.isAlive() && character instanceof Healer && !character.hasReviveUsed()) {
-            character.setHealth(50);  // REVIVE_HEALTH
+            character.setHealth(50);
             character.setReviveUsed(true);
-            return false;   // revived – not dead
+            return false;
         }
         return !character.isAlive();
     }

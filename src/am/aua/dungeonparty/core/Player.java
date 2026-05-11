@@ -2,12 +2,9 @@ package am.aua.dungeonparty.core;
 
 import am.aua.dungeonparty.inventory.Inventory;
 import am.aua.dungeonparty.utils.GameConstants;
+import am.aua.dungeonparty.exceptions.NotEnoughCoinsException;   // added import
 import java.util.ArrayList;
 import java.util.List;
-
-// Abstract base class for all heroes in DungeonParty.
-// Defines common stats, inventory, skill list, and coin management.
-// Subclasses must implement their unique combat behaviour.
 
 public abstract class Player {
     protected String name;
@@ -17,7 +14,7 @@ public abstract class Player {
     protected int coins;
     protected Inventory inventory;
     protected List<Skill> skills;
-    protected boolean reviveUsed;   // used by Healer subclass
+    protected boolean reviveUsed;
 
     public Player(String name, int health, int mana, int attackPower) {
         this.name = name;
@@ -30,14 +27,12 @@ public abstract class Player {
         this.reviveUsed = false;
     }
 
-    // Perform a basic attack on the target. Override a anum subclassnerum bonusneri hamar
     public TurnResult attack(Player target) {
         int damage = attackPower;
         target.takeDamage(damage);
         return new TurnResult(true, name + " attacks for " + damage + " damage.", damage, 0);
     }
 
-    // Apply incoming damage. Rogue-i depqum qich
     public void takeDamage(int amount) {
         health = Math.max(0, health - amount);
     }
@@ -46,13 +41,8 @@ public abstract class Player {
         return health > 0;
     }
 
-    public int getCoins() {
-        return coins;
-    }
-
-    public void addCoins(int amount) {
-        this.coins += amount;
-    }
+    public int getCoins() { return coins; }
+    public void addCoins(int amount) { this.coins += amount; }
 
     public void spendCoins(int amount) throws NotEnoughCoinsException {
         if (coins < amount) throw new NotEnoughCoinsException(name + " has insufficient coins!");
@@ -64,12 +54,10 @@ public abstract class Player {
     public String getName() { return name; }
     public int getHealth() { return health; }
     public int getMana() { return mana; }
+    public int getAttackPower() { return attackPower; }
     public void setHealth(int health) { this.health = health; }
     public void setMana(int mana) { this.mana = mana; }
     public boolean hasReviveUsed() { return reviveUsed; }
     public void setReviveUsed(boolean used) { this.reviveUsed = used; }
 
-    public static class NotEnoughCoinsException extends Exception {
-        public NotEnoughCoinsException(String message) { super(message); }
-    }
 }

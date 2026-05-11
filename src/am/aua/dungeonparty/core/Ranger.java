@@ -2,8 +2,7 @@ package am.aua.dungeonparty.core;
 
 import am.aua.dungeonparty.utils.GameConstants;
 
-// Ranger – possesses a one‑time StunShot skill.
-// The stun attack deals medium damage, stuns the opponent (skip next turn),
+// Ranger – possesses a one‑time StunShot skill with medium damage, stuns the opponent (skip next turn),
 // and grants the Ranger an immediate extra turn.
 // StunShot can only be used once per game.
 
@@ -17,7 +16,7 @@ public class Ranger extends Player {
         stunAvailable = true;
     }
 
-    // Returns true if StunShot has not yet been used.
+    // Returns true if not yet used.
     public boolean isStunAvailable() { return stunAvailable; }
 
     // Call after successfully using StunShot to prevent further use.

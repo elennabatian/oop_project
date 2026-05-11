@@ -2,7 +2,7 @@ package am.aua.dungeonparty.inventory;
 
 import am.aua.dungeonparty.core.TurnResult;
 
-public abstract  class Potion implements Item {
+public class Potion implements Item {
     private String name;
     private String type;
     private int healingAmount;
@@ -18,7 +18,6 @@ public abstract  class Potion implements Item {
                           am.aua.dungeonparty.core.Player target) {
         if (type.equals("Healing")) {
             user.setHealth(user.getHealth() + healingAmount);
-
             return new TurnResult(
                     true,
                     user.getName() + " used " + name + " and healed " + healingAmount + " HP.",
@@ -40,16 +39,9 @@ public abstract  class Potion implements Item {
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-    public String getType() {
-        return type;
-    }
-
-    public int getHealingAmount() {
-        return healingAmount;
-    }
+    public String getName() { return name; }
+    public String getType() { return type; }
+    public int getHealingAmount() { return healingAmount; }
 
     @Override
     public String getDescription() {

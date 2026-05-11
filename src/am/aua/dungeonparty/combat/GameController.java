@@ -2,18 +2,16 @@ package am.aua.dungeonparty.combat;
 
 import am.aua.dungeonparty.core.*;
 import am.aua.dungeonparty.inventory.Item;
-import am.aua.dungeonparty.utils.GameConstants;
-
-// Entire game flow (character selection, shop phases, turn‑based combat, and win/loss.)
+import am.aua.dungeonparty.exceptions.NotEnoughCoinsException;   // added
 
 public class GameController {
     private Player player1;
-    private Character player2;
+    private Player player2;
     private BattleManager battleManager;
     private Store store;
     private boolean battleOver;
-    private Character currentAttacker;
-    private Character currentDefender;
+    private Player currentAttacker;
+    private Player currentDefender;
     private boolean opponentStunned;
 
     public enum Phase { START, PICK1, PICK2, SHOP1, SHOP2, BATTLE, END }
@@ -31,8 +29,7 @@ public class GameController {
 
     public Phase getPhase() { return phase; }
 
-    // ---------- Character creation -----------
-    private Character createCharacter(String className) {
+    private Player createCharacter(String className) {
         switch (className.toLowerCase()) {
             case "warrior": return new Warrior();
             case "mage":    return new Mage();
@@ -44,7 +41,7 @@ public class GameController {
     }
 
     public boolean chooseCharacter(int playerNum, String className) {
-        Character chosen = createCharacter(className);
+        Player chosen = createCharacter(className);
         if (chosen == null) return false;
 
         if (playerNum == 1) {
@@ -53,7 +50,6 @@ public class GameController {
             phase = Phase.PICK2;
         } else {
             if (player2 != null || player1 == null) return false;
-            // Must be a different class
             if (player1.getClass().equals(chosen.getClass())) return false;
             player2 = chosen;
             phase = Phase.SHOP1;
@@ -61,12 +57,10 @@ public class GameController {
         return true;
     }
 
-    public Character getPlayer1() { return player1; }
-    public Character getPlayer2() { return player2; }
+    public Player getPlayer1() { return player1; }
+    public Player getPlayer2() { return player2; }
 
-    // ---------- Store phase----------
-
-    public String buyItem(Character buyer, String itemName) {
+    public String buyItem(Player buyer, String itemName) {
         if (store == null) return "Store not available.";
         try {
             Item item = store.buyItem(itemName, buyer);
@@ -74,17 +68,15 @@ public class GameController {
                 buyer.getInventory().addItem(item);
                 return buyer.getName() + " bought " + item.getName() + ".";
             }
-        } catch (Character.NotEnoughCoinsException e) {
+        } catch (NotEnoughCoinsException e) {   // now using the external exception
             return e.getMessage();
         }
         return "Item not available.";
     }
 
-    // Called after a player finishes shopping. Advances the phase
-
-    public void finishShopping(Character player) {
+    public void finishShopping(Player player) {
         if (phase == Phase.SHOP1 && player == player1) {
-            phase = Phase.SHOP2;   // move to P2's shopping
+            phase = Phase.SHOP2;
         } else if (phase == Phase.SHOP2 && player == player2) {
             phase = Phase.BATTLE;
             currentAttacker = player1;
@@ -93,11 +85,7 @@ public class GameController {
         }
     }
 
-    public Store getStore() {
-        return store;
-    }
-
-    // ---------- Battle phase ----------
+    public Store getStore() { return store; }
 
     public TurnResult processBattleAction(String actionType, int param) {
         if (phase != Phase.BATTLE || battleOver)
@@ -121,7 +109,6 @@ public class GameController {
                 return new TurnResult(false, "Unknown action.", 0, 0);
         }
 
-        // After the action, check if dead
         boolean trulyDead = battleManager.checkDeathAndRevive(currentDefender);
         if (trulyDead) {
             battleOver = true;
@@ -130,25 +117,23 @@ public class GameController {
             return new TurnResult(true, winMsg, res.getDamageDone(), res.getCoinsChanged());
         }
 
-        // Handle extra turn / opponent stun
         if (res.grantsExtraTurn()) {
             opponentStunned = res.isOpponentStunned();
         } else if (opponentStunned) {
             opponentStunned = false;
         } else {
-            Character temp = currentAttacker;
+            Player temp = currentAttacker;
             currentAttacker = currentDefender;
             currentDefender = temp;
         }
         return res;
     }
 
-    public Character getCurrentAttacker() { return currentAttacker; }
-    public Character getCurrentDefender() { return currentDefender; }
+    public Player getCurrentAttacker() { return currentAttacker; }
+    public Player getCurrentDefender() { return currentDefender; }
     public boolean isBattleOver() { return battleOver; }
 
-    // Returns the winner, or null if the battle is not over.
-    public Character getWinner() {
+    public Player getWinner() {
         if (!battleOver) return null;
         return player1.isAlive() ? player1 : player2;
     }

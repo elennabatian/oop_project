@@ -1,7 +1,5 @@
 package am.aua.dungeonparty.core;
 
-// Stores the outcome of a single combat action.
-
 public class TurnResult {
     private boolean success;
     private String message;
@@ -27,6 +25,7 @@ public class TurnResult {
     public boolean isSuccess() { return success; }
     public String getMessage() { return message; }
     public int getDamageDone() { return damageDone; }
+    public int getCoinsChanged() { return coinsChanged; }
     public boolean grantsExtraTurn() { return extraTurn; }
     public boolean isOpponentStunned() { return opponentStunned; }
 }

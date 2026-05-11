@@ -13,7 +13,7 @@ public class Warrior extends Player {
     // Overridden to apply the 40% bonus exactly as required.
     @Override
     public TurnResult attack(Player target) {
-        int damage = (int)(attackPower);  // already boosted in constructor
+        int damage = (int)(attackPower);
         target.takeDamage(damage);
         return new TurnResult(true, name + " slashes for " + damage + " damage.", damage, 0);
     }
