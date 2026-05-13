@@ -8,23 +8,29 @@ https://canva.link/aej5gb8r7i2bzdn
 ### Dungeon Party Project
 
 To ensure efficient teamwork and organized development, the Dungeon Party project was divided into three major responsibility areas: core gameplay logic, inventory/store systems, and user interface integration. Each team member was assigned ownership of specific packages and systems based on the project architecture.
+
 Person 1 — Elen Nabatian
+
 Core Gameplay and Combat Logic
 Elen Nabatian was responsible for implementing the main gameplay mechanics and combat system. This included the entire core package, the BattleManager, and the combat and turn-flow sections of GameController.
 Main responsibilities included:
+
 ● Designing the abstract Character class
+
 ● Implementing all five subclasses:
-○ Warrior
-○ Mage
-○ Healer
-○ Ranger
-○ Rogue
+
+  ○ Warrior
+  ○ Mage
+  ○ Healer
+  ○ Ranger
+  ○ Rogue
 ●
+
 ● Developing combat mechanics such as:
-○ attacks
-○ skills
-○ stun effects
-○ revive mechanics
+  ○ attacks
+  ○ skills
+  ○ stun effects
+  ○ revive mechanics
 ○ combo attacks
 ● Creating the Skill and TurnResult classes
 ● Managing turn logic and battle flow
