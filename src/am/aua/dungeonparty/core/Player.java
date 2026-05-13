@@ -50,14 +50,15 @@ public abstract class Player {
     }
 
     public Inventory getInventory() { return inventory; }
-    public List<Skill> getSkills() { return skills; }
+    public List<Skill> getSkills() {return skills; }
     public String getName() { return name; }
-    public int getHealth() { return health; }
+    public int getHealth() { return health;}
     public int getMana() { return mana; }
-    public int getAttackPower() { return attackPower; }
+    public int getAttackPower() { return attackPower;}
     public void setHealth(int health) { this.health = health; }
-    public void setMana(int mana) { this.mana = mana; }
+    public void setMana(int mana) { this.mana =mana; }
+    public void setCoins(int coins) { this.coins = coins;}
     public boolean hasReviveUsed() { return reviveUsed; }
-    public void setReviveUsed(boolean used) { this.reviveUsed = used; }
+    public void setReviveUsed(boolean used) {this.reviveUsed = used; }
 
 }

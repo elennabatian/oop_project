@@ -137,4 +137,17 @@ public class GameController {
         if (!battleOver) return null;
         return player1.isAlive() ? player1 : player2;
     }
+
+    public void initializeLoadedGame(Player p1, Player p2, Phase phase) {
+        this.player1 = p1;
+        this.player2 = p2;
+        this.phase = phase;
+        this.battleOver = false;
+        this.opponentStunned = false;
+        if (phase == Phase.BATTLE) {
+            currentAttacker = p1;
+            currentDefender = p2;
+        }
+    }
+
 }

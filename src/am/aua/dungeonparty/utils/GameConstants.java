@@ -1,7 +1,7 @@
 package am.aua.dungeonparty.utils;
 
 public class GameConstants {
-    public static final int STARTING_COINS = 2000;
+    public static final int STARTING_COINS = 500;
     public static final int MAX_HEALTH = 100;
     public static final int MAX_MANA = 100;
 
